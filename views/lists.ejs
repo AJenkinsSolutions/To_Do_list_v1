@@ -10,8 +10,25 @@
         <link rel="stylesheet" href="">
     </head>
     <body>
-       <h1> Today is <%=day%></h1>
-        
+    
+            <h1> <%=day%></h1>
+      
+            <ul>
+                <%if(items.length >0){%>
+                    <%for(let i=0; i<items.length; i++){%>
+                    <li> <%=items[i]%></li>
+                    <%}%>
+                <%}else{%>
+                    
+                <%}%>
+            </ul>
+            <form action="/" method="post">
+                <label for="item">Add Todo Item</label>
+                <input type="text" name="item" placeholder="ToDo item">
+                <button type="submit">Add</button>
+            </form>
+           
+
         <script src="" async defer></script>
     </body>
-</html>
+</html> 

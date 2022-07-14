@@ -1,0 +1,23 @@
+{
+  "name": "to_do_list_v1",
+  "version": "1.0.0",
+  "description": "Simple Todo List web app made with nodejs, expressjs, ejs, html and css",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AJenkinsSolutions/To_Do_list_v1.git"
+  },
+  "author": "Alexander Jenkins",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AJenkinsSolutions/To_Do_list_v1/issues"
+  },
+  "homepage": "https://github.com/AJenkinsSolutions/To_Do_list_v1#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19"
+  }
+}

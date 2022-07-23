@@ -20,33 +20,35 @@ app.listen(port, () => {
 
 //Mongoose Configuration
 async function main(){
+    //TodoDb is the name of our collection where our documents live
     await mongoose.connect('mongodb://localhost:27017/TodoDb')
     console.log("Successfull Connected");
 
-    //Schema
+    //Item Schema: this refers to the individual todo list 'ITEMS' i.e ('eat food', 'drink water')
+    // In this case our main list is already refered to as 'TODAY' hence why theres no name property of this document
     const itemSchema = new mongoose.Schema({
         name: String
     })
 
+
+    // the listSchema is the refers to the WHOLE list + items within the list
+    // i.e a list document will have. {name: Title of said list, items: [array of items that populate the list]}
+    const listSchema = new mongoose.Schema({
+        name: String, 
+        items: [itemSchema]
+    })
+
     //Model 
     const ItemModel = mongoose.model('Item', itemSchema);
-    const WorkItemModel = mongoose.model('workItem', itemSchema);
-
+    const listModel = mongoose.model('list', listSchema);
     
-
-    
-   
-
-
-    
-
 //Default items
 //insertMany
 const defaultItemsArray = [{name:"Welcome to your Todo List"}, {name: "Hit the + button to add a new item"}, {name: "<--- hit this to delte an item"}]
 
 const workItems = [];
 
-app.get('/', (req, res) => {
+app.get(['/', 'home'], (req, res) => {
     // TODO: Move to outside module
 //     let options = {
 //         weekday: 'long',
@@ -73,37 +75,68 @@ app.get('/', (req, res) => {
     
 });
 
+app.get("/:customListName", (req, res) => {
+    //parameter parasing
+    const customlistName = req.params.customListName;
 
+    //Querying the listsmodel Collection.
+    //To see if a 'Document' with the same name already exsists.
+    listModel.findOne({name: customlistName}, (err, foundList) => {
+        if(!err){
+            if(!foundList){
+                console.log('Doesnt Exsist');
+                //create a new list
+                const list = new listModel({
+                    name: customlistName,
+                    items: defaultItemsArray
+                    });
+                list.save();
+                res.redirect('/'+ customlistName);
+            }else{
+                console.log('Exsists');
+                //Show exsisting list
+                res.render('lists', {listTitle: foundList.name, items:foundList.items})
+            }
+        }
 
+    })
 
+})
 
 app.post('/', (req, res) =>{
 
     const reqItem = req.body.item;
-    if(req.body.list === 'Work'){
-        const newItem = new WorkItemModel({name: reqItem});
-        newItem.save();
-        res.redirect("/work");
-    }else{
-        const newItem = new ItemModel({name: reqItem});
+    const listName = req.body.list;
+
+    //create new item
+    const newItem = new ItemModel({name: reqItem});
+    
+
+    if(listName === 'Today'){
         newItem.save();
         res.redirect("/");
+    }else{
+        listModel.findOne({name: listName}, (err, foundList) => {
+            foundList.items.push(newItem);
+            foundList.save();
+            res.redirect("/" + listName);
+        })
+        
     }
 });
 
 app.post('/delete', (req, res) => {
     const checkBoxItemId = req.body.checkbox;
-        console.log('items');
-        ItemModel.deleteOne({_id: checkBoxItemId}, (err)=>{
+    console.log(req.body.list)
+        ItemModel.findByIdAndDelete({_id: checkBoxItemId},function(err){
             if(err){
                 console.log(err);
             }else{
-                console.log('Successdfully removed id' + checkBoxItemId)
-                res.redirect("/");
+                console.log('Successdfully removed id' + checkBoxItemId);
+                res.redirect("/"); 
             }
-        });
-    
 
+        });
 
 })
 

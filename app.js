@@ -5,7 +5,6 @@ const _ = require('lodash');
 
 
 const app = express();
-const port = 3000;
 
 
 //body parser
@@ -16,8 +15,13 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static( __dirname, + 'public'));
 app.set('view engine', 'ejs');
 
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
+
 app.listen(port, () => {
-    console.log('Server listening on port: ' + port)
+    console.log('Server listening successfully on port: ' + port)
 
 });
 // cluster0 mongo server creds

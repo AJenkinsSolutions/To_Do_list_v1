@@ -12,6 +12,9 @@
   },
   "author": "Alexander Jenkins",
   "license": "ISC",
+  "engines": {
+    "node": "v16.15.1"
+  },
   "bugs": {
     "url": "https://github.com/AJenkinsSolutions/To_Do_list_v1/issues"
   },

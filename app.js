@@ -61,7 +61,7 @@ const defaultItemsArray = [{name:"Welcome to your Todo List"}, {name: "Hit the +
 
 const workItems = [];
 
-app.get(['/', 'home'], (req, res) => {
+app.get('/', (req, res) => {
     // TODO: Move to outside module
 //     let options = {
 //         weekday: 'long',

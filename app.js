@@ -1,6 +1,8 @@
 const e = require('express');
 const express = require('express');
 const mongoose = require('mongoose');
+const _ = require('lodash');
+
 
 const app = express();
 const port = 3000;
@@ -74,17 +76,22 @@ app.get(['/', 'home'], (req, res) => {
     })
     
 });
+app.get('/Favicon.ico', (req,res)=>{
+    return 'your faveicon'
+   })
 
 app.get("/:customListName", (req, res) => {
     //parameter parasing
-    const customlistName = req.params.customListName;
+    const customlistName = _.capitalize(req.params.customListName);
+
+    console.log('Custom Route "GET": listName ' + customlistName);
 
     //Querying the listsmodel Collection.
     //To see if a 'Document' with the same name already exsists.
     listModel.findOne({name: customlistName}, (err, foundList) => {
         if(!err){
             if(!foundList){
-                console.log('Doesnt Exsist');
+                console.log('err: List doesnt exsist');
                 //create a new list
                 const list = new listModel({
                     name: customlistName,
@@ -93,7 +100,7 @@ app.get("/:customListName", (req, res) => {
                 list.save();
                 res.redirect('/'+ customlistName);
             }else{
-                console.log('Exsists');
+                console.log('List Found!');
                 //Show exsisting list
                 res.render('lists', {listTitle: foundList.name, items:foundList.items})
             }
@@ -107,7 +114,6 @@ app.post('/', (req, res) =>{
 
     const reqItem = req.body.item;
     const listName = req.body.list;
-
     //create new item
     const newItem = new ItemModel({name: reqItem});
     
@@ -127,17 +133,27 @@ app.post('/', (req, res) =>{
 
 app.post('/delete', (req, res) => {
     const checkBoxItemId = req.body.checkbox;
-    console.log(req.body.list)
+    const listTitle = req.body.listName;
+    console.log('Delete: List Title: ' + listTitle);
+    
+    //list title 
+    if(listTitle === 'Today'){
         ItemModel.findByIdAndDelete({_id: checkBoxItemId},function(err){
             if(err){
-                console.log(err);
+                console.log('An Error occurred' + err);
             }else{
-                console.log('Successdfully removed id' + checkBoxItemId);
+                console.log('Successdfully item removed id' + checkBoxItemId);
                 res.redirect("/"); 
             }
 
         });
-
+    }else{
+        listModel.findOneAndUpdate({name: listTitle}, {$pull:{items: {_id: checkBoxItemId}}}, function(err, foundList){
+            if(!err){
+                res.redirect('/' + listTitle);
+            }
+        })
+    }
 })
 
 

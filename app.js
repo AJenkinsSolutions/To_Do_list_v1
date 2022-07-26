@@ -18,12 +18,19 @@ app.set('view engine', 'ejs');
 
 app.listen(port, () => {
     console.log('Server listening on port: ' + port)
+
 });
+// cluster0 mongo server creds
+const user = 'admin-alex'
+const pw = 'admin123'
+
+
+
 
 //Mongoose Configuration
 async function main(){
     //TodoDb is the name of our collection where our documents live
-    await mongoose.connect('mongodb://localhost:27017/TodoDb')
+    await mongoose.connect('mongodb+srv://admin-alex:admin123@cluster0.pvodwda.mongodb.net/TodoDb')
     console.log("Successfull Connected");
 
     //Item Schema: this refers to the individual todo list 'ITEMS' i.e ('eat food', 'drink water')
@@ -77,6 +84,7 @@ app.get(['/', 'home'], (req, res) => {
     
 });
 app.get('/Favicon.ico', (req,res)=>{
+    
     return 'your faveicon'
    })
 
